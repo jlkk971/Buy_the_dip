@@ -215,11 +215,14 @@ def mixed_vix_sp():
     final1=ret1.div(ret1.iloc[0]).mul(100)
     final1=final1.dropna()
 
+    print("Hello World")
+
     final=algo_1.sum(axis=1)
     ret=(final+1).cumprod()
     ret=ret.dropna()
     final=ret.div(ret.iloc[0]).mul(100)
     final=final.dropna()
+
 
     df_last=pd.DataFrame()
     df_last['SP500']=final1
