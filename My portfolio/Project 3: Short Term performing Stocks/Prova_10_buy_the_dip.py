@@ -9,10 +9,10 @@ pd.set_option('display.max_rows', None, 'display.max_columns', None)
 
 
 
-d=date(2020,1,15)
+d=date(2018,1,15)
 
 def data_mining():
-    df=pd.read_csv('/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks23-04-2021.csv', index_col=0, parse_dates=True)
+    df=pd.read_csv('/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks06-05-2021.csv', index_col=0, parse_dates=True)
     df=pd.DataFrame(df).sort_index()
     df=df[d.strftime('%Y-%m-%d'):]
     return df
@@ -29,7 +29,7 @@ def rolling_sampling():
 def find_top():
     df=rolling_sampling()
     df=df.apply(lambda s: s.nlargest(100).index.tolist(), axis=1)
-    csv=df.tail().to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/Tickers21-04-2021.csv')
+    #csv=df.tail().to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/Tickers21-04-2021.csv')
     df_2=data_mining()
     backtest=pd.DataFrame()
     df=pd.DataFrame(df)
@@ -46,6 +46,7 @@ def backtesting():
     backtest=pd.DataFrame()
     df=find_top()
     df=pd.DataFrame(df)
+    #NO SHIFT IF TAKING PRICES REALTIME
     df=df.shift(1).dropna()
     df_2=data_mining()
     for i, row in df.iterrows():
@@ -232,4 +233,5 @@ def mixed_vix_sp():
 
 
 find_top()
+versus_sp500()
 mixed_vix()

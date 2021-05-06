@@ -116,8 +116,9 @@ def data_mining():
 
     tickers2=[]
 
+    print(tickers)
 
-    tickers=['AAPL','AMZN']
+    #tickers=['AAPL','AMZN']
 
 
     for i in tickers:
@@ -131,6 +132,7 @@ def data_mining():
             norm = closing3.div(closing3.iloc[0]).mul(100)
             df=df.append((closing3['Close']))
             tickers2.append(i)
+
         except:
             pass
 
@@ -139,11 +141,12 @@ def data_mining():
     df=df.T
     df=df.pct_change()
     df=df.replace(np.nan,0)
-    #df = df.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks16-04-2021.csv')
-
     df.index=pd.to_datetime(df.index, format='%Y-%m-%d')
-
     print(df)
+
+    df = df.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks06-05-2021.csv')
+
+
     return df
 
 
