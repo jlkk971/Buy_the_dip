@@ -144,11 +144,15 @@ def data_mining():
     df.index=pd.to_datetime(df.index, format='%Y-%m-%d')
     print(df)
 
-    df = df.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks06-05-2021.csv')
+    df = df.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks07-05-2021.csv')
+    print('helloworld')
+
 
 
     return df
 
 
 data_mining()
+
+
 
