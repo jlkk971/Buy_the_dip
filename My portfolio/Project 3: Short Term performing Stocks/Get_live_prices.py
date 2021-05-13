@@ -9,30 +9,6 @@ from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 pd.set_option('display.max_rows', None, 'display.max_columns', None)
 
-
-'''
-pd.set_option('display.max_rows',None,'display.max_columns',None)
-
-def get_prices():
-    ticker_list=['AAPL','PVH']
-    for ticker in ticker_list:
-
-        url=requests.get('https://finance.yahoo.com/quote/'+ticker+'?p='+ticker)
-        data = BeautifulSoup(url.content, "lxml")
-        price = data.find('span', attrs={"data-reactid": "32"})
-        print(price)
-        interm = re.sub(r'\[(.*?)\]', price)
-        price2=re.findall(r'<(.+?)>', interm)
-
-        print(price2)
-get_prices()
-'''
-
-
-
-
-
-
 def data_mining():
 
     url=requests.get('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies').text
@@ -45,8 +21,6 @@ def data_mining():
     tickers=[]
     for i in tick:
         links.append(i.get('href'))
-
-
 
     for i in links:
         if 'http' in i:
@@ -85,41 +59,16 @@ def data_mining():
             else:
                 links2.append(i[-5:])
 
-
     for i in links2:
         tickers.append(i.upper())
-
 
     tickers=sorted(tickers)
     tickers.remove('BF.B')
     tickers.remove('BRK.B')
 
-    #ADDING NASDAQ TICKERS FROM TICKER
-
-    cereal=pd.read_csv('/Users/giuseppelecca/Desktop/Project_1 best performing stocks/companylist.csv')
-
-    nasdaq=[]
-
-    for i in cereal['Symbol']:
-        nasdaq.append(i.upper())
-
-
-
-    df=pd.DataFrame()
-
-    #tickers=tickers+nasdaq
-
     tickers=list(dict.fromkeys(tickers))
-
     tickers=sorted(tickers)
-
-
     tickers2=[]
-
-    print(tickers)
-
-    #tickers=['AAPL','AMZN']
-
 
     for i in tickers:
         try:
@@ -136,7 +85,6 @@ def data_mining():
         except:
             pass
 
-
     df=df.set_index([tickers2])
     df=df.T
     df=df.pct_change()
@@ -145,12 +93,8 @@ def data_mining():
     print(df)
 
     df = df.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks07-05-2021.csv')
-    print('helloworld')
-
-
 
     return df
-
 
 data_mining()
 
