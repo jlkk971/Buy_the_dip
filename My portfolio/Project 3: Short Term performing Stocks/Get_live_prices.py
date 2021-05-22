@@ -19,12 +19,13 @@ def data_mining():
     tickers=table1['Symbol'].tolist()
     headers=[]
 
+    tickers=['AAPL','AMZN']
 
     df=pd.DataFrame()
 
     for i in tickers:
         try:
-            prices=yf.download(i, start='2018-01-01', end=date.today(), header=[0,1], parse_date=['Date'], index_col=['Date'] )
+            prices=yf.download(i, start='2010-01-01', end=date.today(), header=[0,1], parse_date=['Date'], index_col=['Date'] )
             prices2={'Close':get_live_price(i)}
             closing=pd.DataFrame(prices['Close'])
             last_date=date.today()
@@ -42,11 +43,12 @@ def data_mining():
     df=df.pct_change()
     df=df.replace(np.nan,0)
     df.index=pd.to_datetime(df.index, format='%Y-%m-%d')
+    #df = df.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks22-05-2021.csv')
+    #TESTING ENVIRONMENT
+    df=pd.read_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks20-05-2021.csv')
 
-    #df = df.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks14-05-2021.csv')
     return df
 
-data_mining()
-
+print(data_mining())
 
 

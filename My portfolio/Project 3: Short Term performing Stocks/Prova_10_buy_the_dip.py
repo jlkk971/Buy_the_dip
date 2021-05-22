@@ -6,19 +6,21 @@ from datetime import date, timedelta
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 pd.set_option('display.max_rows', None, 'display.max_columns', None)
+from Get_live_prices import data_mining
 
 
-
+#prices=data_mining()
+prices=pd.read_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks20-05-2021.csv')
 d=date(2018,1,15)
 
-def data_mining():
-    df=pd.read_csv('/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks06-05-2021.csv', index_col=0, parse_dates=True)
-    df=pd.DataFrame(df).sort_index()
-    df=df[d.strftime('%Y-%m-%d'):]
+def get_data():
+    df=prices
+    #df=pd.DataFrame(df).sort_index()
+    #df=df[d.strftime('%Y-%m-%d'):]
     return df
 
 def rolling_sampling():
-    df=data_mining()
+    df=get_data()
     #rolling sharpe ratio
     rolly_mean=df.rolling(window=180).mean()
     rolly_std=df.rolling(window=180).std()*np.sqrt(126)
@@ -26,21 +28,21 @@ def rolling_sampling():
     rolly_sharpe=rolly_sharpe.dropna()
     return rolly_sharpe
 
+
 def find_top():
     df=rolling_sampling()
     df=df.apply(lambda s: s.nlargest(100).index.tolist(), axis=1)
-    #csv=df.tail().to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/Tickers21-04-2021.csv')
-    df_2=data_mining()
+    df_2=get_data()
     backtest=pd.DataFrame()
     df=pd.DataFrame(df)
     for i, row in df.iterrows():
         for item in row:
             backtest=backtest.append(df_2.loc[i,item])
 
-    df_lowest_ret=backtest.apply(lambda s: s.nsmallest(5).index.tolist(),axis=1)
-    #csv=df_lowest_ret.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/Tickers_11-03-2021.csv')
-    print(df_lowest_ret)
+    df_lowest_ret=backtest.apply(lambda s: s.nsmallest(10).index.tolist(),axis=1)
     return df_lowest_ret
+
+print(find_top())
 
 def backtesting():
     backtest=pd.DataFrame()
@@ -48,7 +50,7 @@ def backtesting():
     df=pd.DataFrame(df)
     #NO SHIFT IF TAKING PRICES REALTIME
     df=df.shift(1).dropna()
-    df_2=data_mining()
+    df_2=get_data()
     for i, row in df.iterrows():
         for item in row:
             backtest=backtest.append(df_2.loc[i,item])
@@ -63,6 +65,8 @@ def backtesting():
     mean_backtest.div(mean_backtest.iloc[0]).mul(100)
     return mean_backtest
 
+print(backtesting())
+
 def versus_sp500():
     algo=backtesting()
     price=yf.download('^GSPC', start=(d+timedelta(days=260)), end=date.today(), parse_date=['Date'], set_index=['Date'])
@@ -75,6 +79,8 @@ def versus_sp500():
     print(final)
     final.plot()
     plt.show()
+
+
 
 def mixed_vix():
 
@@ -231,7 +237,3 @@ def mixed_vix_sp():
     df_last.plot()
     plt.show()
 
-
-find_top()
-versus_sp500()
-mixed_vix()
