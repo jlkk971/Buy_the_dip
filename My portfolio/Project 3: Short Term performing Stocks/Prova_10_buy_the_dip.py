@@ -10,13 +10,13 @@ from Get_live_prices import data_mining
 
 
 #prices=data_mining()
-prices=pd.read_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks20-05-2021.csv')
+prices=pd.read_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks20-05-2021.csv', index_col=0, parse_dates=True)
 d=date(2018,1,15)
 
 def get_data():
     df=prices
-    #df=pd.DataFrame(df).sort_index()
-    #df=df[d.strftime('%Y-%m-%d'):]
+    df=pd.DataFrame(df).sort_index()
+    df=df[d.strftime('%Y-%m-%d'):]
     return df
 
 def rolling_sampling():
@@ -38,67 +38,53 @@ def find_top():
     for i, row in df.iterrows():
         for item in row:
             backtest=backtest.append(df_2.loc[i,item])
-
-    df_lowest_ret=backtest.apply(lambda s: s.nsmallest(10).index.tolist(),axis=1)
+    df_lowest_ret=backtest.apply(lambda s: s.nsmallest(5).index.tolist(),axis=1)
     return df_lowest_ret
 
-print(find_top())
 
 def backtesting():
     backtest=pd.DataFrame()
     df=find_top()
     df=pd.DataFrame(df)
-    #NO SHIFT IF TAKING PRICES REALTIME
     df=df.shift(1).dropna()
     df_2=get_data()
     for i, row in df.iterrows():
         for item in row:
             backtest=backtest.append(df_2.loc[i,item])
-
-    #backtest=backtest.replace(0, np.nan)
-    #MARKOWITZ backwards??
-
     mean_backtest=backtest.mean(axis=1)
-
     mean_backtest=mean_backtest.add(1).cumprod().mul(100)
-    #df = mean_backtest.to_excel(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/output_19_20.xlsx')
-    mean_backtest.div(mean_backtest.iloc[0]).mul(100)
+    #mean_backtest=mean_backtest.div(mean_backtest.iloc[0]).mul(100)
     return mean_backtest
 
-print(backtesting())
+
+
+
 
 def versus_sp500():
     algo=backtesting()
     price=yf.download('^GSPC', start=(d+timedelta(days=260)), end=date.today(), parse_date=['Date'], set_index=['Date'])
-    price=price['Close']
+    price=pd.DataFrame(price['Close'])
     price=price.div(price.iloc[0]).mul(100)
-    print(price)
     final=pd.DataFrame()
     final['Algo']=algo
     final['SP500']=price
-    print(final)
     final.plot()
-    plt.show()
+    return plt.show()
 
-
+versus_sp500()
 
 def mixed_vix():
-
     algo=backtesting()
     vix=yf.download('^VIX', start=(d+timedelta(days=260)), end=date.today(), parse_date=['Date'], set_index=['Date'])
     vix=pd.DataFrame(vix['Close'])
-
     sp500=yf.download('^GSPC ^VIX', start=(d+timedelta(days=260)), end=date.today(), parse_date=['Date'], set_index=['Date'])
     sp500=pd.DataFrame(sp500['Close'])
-
-
     final=pd.DataFrame()
     final['algo']=algo
     final['VIX']=sp500['^VIX']
     final['SP500']=sp500['^GSPC']
     final=final.pct_change().dropna()
     #pct_csv=final.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/final27-9-2020.csv')
-
     mat=np.ones((len(final['algo']),2))
 
 

@@ -46,9 +46,6 @@ def data_mining():
     #df = df.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks22-05-2021.csv')
     #TESTING ENVIRONMENT
     df=pd.read_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks20-05-2021.csv')
-
     return df
-
-print(data_mining())
 
 
