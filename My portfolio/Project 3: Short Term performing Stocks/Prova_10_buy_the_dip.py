@@ -9,9 +9,10 @@ pd.set_option('display.max_rows', None, 'display.max_columns', None)
 from Get_live_prices import data_mining
 
 
-#prices=data_mining()
-prices=pd.read_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks20-05-2021.csv', index_col=0, parse_dates=True)
-d=date(2018,1,15)
+prices=data_mining()
+#prices=pd.read_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks20-05-2021.csv', index_col=0, parse_dates=True)
+d=date(2015,1,1)
+
 
 def get_data():
     df=prices
@@ -19,6 +20,7 @@ def get_data():
     df=df[d.strftime('%Y-%m-%d'):]
     return df
 
+'''
 def rolling_sampling():
     df=get_data()
     #rolling sharpe ratio
@@ -27,6 +29,17 @@ def rolling_sampling():
     rolly_sharpe=(rolly_mean*126-0.0069)/rolly_std
     rolly_sharpe=rolly_sharpe.dropna()
     return rolly_sharpe
+'''
+
+def rolling_sampling():
+    df=get_data()
+    #rolling sharpe ratio
+    rolly_mean=df.rolling(window=252).mean()
+    rolly_std=df.rolling(window=252).std()
+    rolly_sharpe=(rolly_mean/rolly_std)*(252**0.5)
+    rolly_sharpe=rolly_sharpe.dropna()
+    return rolly_sharpe
+
 
 
 def find_top():
@@ -57,12 +70,9 @@ def backtesting():
     return mean_backtest
 
 
-
-
-
 def versus_sp500():
     algo=backtesting()
-    price=yf.download('^GSPC', start=(d+timedelta(days=260)), end=date.today(), parse_date=['Date'], set_index=['Date'])
+    price=yf.download('^GSPC', start=(d+timedelta(days=252)), end=date.today(), parse_date=['Date'], set_index=['Date'])
     price=pd.DataFrame(price['Close'])
     price=price.div(price.iloc[0]).mul(100)
     final=pd.DataFrame()
@@ -75,7 +85,7 @@ versus_sp500()
 
 def mixed_vix():
     algo=backtesting()
-    vix=yf.download('^VIX', start=(d+timedelta(days=260)), end=date.today(), parse_date=['Date'], set_index=['Date'])
+    vix=yf.download('^VIX', start=(d+timedelta(days=252)), end=date.today(), parse_date=['Date'], set_index=['Date'])
     vix=pd.DataFrame(vix['Close'])
     sp500=yf.download('^GSPC ^VIX', start=(d+timedelta(days=260)), end=date.today(), parse_date=['Date'], set_index=['Date'])
     sp500=pd.DataFrame(sp500['Close'])
@@ -86,11 +96,8 @@ def mixed_vix():
     final=final.pct_change().dropna()
     #pct_csv=final.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/final27-9-2020.csv')
     mat=np.ones((len(final['algo']),2))
-
-
     #Weights algo
     mat[:,0]=mat[:,0]*0.7
-
     #Weights Vix
     mat[:,1]=mat[:,1]*0.3
 

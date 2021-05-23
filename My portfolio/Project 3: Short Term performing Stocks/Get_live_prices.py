@@ -19,7 +19,7 @@ def data_mining():
     tickers=table1['Symbol'].tolist()
     headers=[]
 
-    tickers=['AAPL','AMZN']
+    #tickers=['AAPL','AMZN']
 
     df=pd.DataFrame()
 
@@ -45,7 +45,7 @@ def data_mining():
     df.index=pd.to_datetime(df.index, format='%Y-%m-%d')
     #df = df.to_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks22-05-2021.csv')
     #TESTING ENVIRONMENT
-    df=pd.read_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks20-05-2021.csv')
+    #df=pd.read_csv(r'/Users/giuseppelecca/Desktop/Project_1 best performing stocks/stocks20-05-2021.csv')
     return df
 
 
